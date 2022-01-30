@@ -1,21 +1,17 @@
 <template>
-  <div>
-
-  </div>
+  <div></div>
 </template>
 
 <script>
-// import L from 'leaflet';
-import { GeoSearchControl } from 'leaflet-geosearch';
-
+import {
+  GeoSearchControl,
+  OpenStreetMapProvider,
+  GoogleProvider,
+} from "leaflet-geosearch";
 
 export default {
-  props: {
-    options: {
-      required: true,
-    },
-  },
-  name: 'v-geosearch',
+  props: ["apiKey"],
+  name: "v-geosearch",
   mounted() {
     this.add();
   },
@@ -24,14 +20,21 @@ export default {
   },
   methods: {
     deferredMountedTo(parent) {
-      const searchControl = new GeoSearchControl(this.options);
-      parent.addControl(searchControl);      
-      searchControl.getContainer().onclick = e => { e.stopPropagation(); };
+      const provider = new GoogleProvider({
+        params: {
+          key: this.apiKey,
+        },
+      });
+      const searchControl = new GeoSearchControl({ provider: provider });
+      parent.addControl(searchControl);
+      searchControl.getContainer().onclick = (e) => {
+        e.stopPropagation();
+      };
     },
     remove() {
       if (this.markerCluster) {
         this.$parent.removeLayer(this.markerCluster);
-      }      
+      }
     },
     add() {
       if (this.$parent._isMounted) {
